@@ -1,15 +1,15 @@
 #-*- coding: utf-8 -*-
-import sys, os
-from keras.models import load_model
-from keras.preprocessing.image import load_img, img_to_array
+
+import sys
+import os
 import numpy as np
 import cv2
 import time
-
+from keras.models import load_model
+from keras.preprocessing.image import load_img, img_to_array
 from unlock_client import callraspi
 from slack_s103 import post_slack
 
-#cascade_path = "/usr/local/opt/opencv/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml"
 cascade_path = "/usr/local/opt/opencv/share/OpenCV/haarcascades/haarcascade_frontalface_alt2.xml"
 cascade = cv2.CascadeClassifier(cascade_path)
 color = (255, 255, 255)
@@ -28,17 +28,22 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 color = (255,255,255)
 
 def main():
-
     while(cap.isOpened()):
         ret, frame = cap.read()
         #face detection
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = cascade.detectMultiScale(gray,scaleFactor=1.1,minNeighbors=5,minSize=(100,100),flags = cv2.CASCADE_SCALE_IMAGE)
+        faces = cascade.detectMultiScale(gray,scaleFactor=1.1,
+                                         minNeighbors=5,minSize=(100,100),
+                                         flags = cv2.CASCADE_SCALE_IMAGE
+                                         )
         cv2.imwrite("frontalface.png",frame)
         img=cv2.imread("frontalface.png")
         if len(faces) > 0:
             for rect in faces:
-                cv2.rectangle(frame, tuple(rect[0:2]),tuple(rect[0:2] + rect[2:4]), color, thickness=2)
+                cv2.rectangle(frame, tuple(rect[0:2]),
+                              tuple(rect[0:2] + rect[2:4]),
+                              color, thickness=2
+                              )
                 x = rect[0]
                 y = rect[1]
                 width = rect[2]
@@ -91,8 +96,6 @@ def main():
         code = cv2.waitKey(1)
         if code == ord("q"):
             break
-
-
     cap.release()
     cv2.destroyAllWindows()
 
